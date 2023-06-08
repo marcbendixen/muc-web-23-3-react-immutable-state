@@ -1,10 +1,6 @@
-# React Component Testing: Demo End
+# React Immutable State: Demo
 
-This is the end result of the React Component Testing demo.
-
-## Notes
-
-- You only have to touch the [`pages/index.js`](./pages/index.js) file.
+This is the Demo of the React Immutable State Session.
 
 ## Development
 
