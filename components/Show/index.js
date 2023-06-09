@@ -2,6 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import Episode from "../Episode";
 import Season from "../Season";
+import { useImmer } from "use-immer";
 
 const Title = styled.h1`
   text-decoration: underline;
@@ -19,22 +20,50 @@ const StyledShow = styled.div`
 `;
 
 export default function Show({ initialSeasons = [] }) {
-  const [seasons, setSeasons] = useState(initialSeasons);
+  // const [seasons, setSeasons] = useState(initialSeasons);
+  const [seasons, updateSeasons] = useImmer(initialSeasons);
 
   function handleToggleHasSeen(seasonNumber, episodeNumber) {
-    setSeasons((prevSeasons) => {
-      const season = prevSeasons.find(({ number }) => number === seasonNumber);
-
+    // Version 3: with `Immer` and `use-immer`
+    updateSeasons((draft) => {
+      const season = draft.find(({ number }) => number === seasonNumber);
       const episode = season.episodes.find(
         ({ number }) => number === episodeNumber
       );
-
       episode.hasSeen = !episode.hasSeen;
-
-      console.log(prevSeasons);
-
-      return prevSeasons;
     });
+
+    // Version 2: works because we copied the array and mutate the new state
+    // setSeasons((prevSeasons) => {
+    //   return prevSeasons.map((season) => {
+    //     if (season.number !== seasonNumber) {
+    //       return season;
+    //     }
+    //     return {
+    //       ...season,
+    //       episodes: season.episodes.map((episode) => {
+    //         if (episode.number !== episodeNumber) {
+    //           return episode;
+    //         }
+    //         return {
+    //           ...episode,
+    //           hasSeen: !episode.hasSeen,
+    //         };
+    //       }),
+    //     };
+    //   });
+    // });
+
+    // Version 1: not working because we mutate the state directly
+    // setSeasons((prevSeasons) => {
+    //   const season = prevSeasons.find(({ number }) => number === seasonNumber);
+    //   const episode = season.episodes.find(
+    //     ({ number }) => number === episodeNumber
+    //   );
+    //   episode.hasSeen = !episode.hasSeen;
+    //   console.log(prevSeasons);
+    //   return prevSeasons;
+    // });
   }
 
   return (
